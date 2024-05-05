@@ -7,9 +7,13 @@ import {
 } from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
-export const getAllContacts = async (req, res) => {
+export const getAllContacts = async (req, res, next) => {
   const contacts = await listContacts();
-  res.status(200).json(contacts);
+  try {
+    res.status(200).json(contacts);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const getOneContact = async (req, res, next) => {
@@ -40,9 +44,12 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res) => {
   const { name, email, phone } = req.body;
-
-  const newContact = await addContact(name, email, phone);
-  res.status(201).json(newContact);
+  try {
+    const newContact = await addContact(name, email, phone);
+    res.status(201).json(newContact);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateContact = async (req, res, next) => {
