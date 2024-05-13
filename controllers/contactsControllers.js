@@ -49,8 +49,9 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = req.body;
-    const updatedContact = await Contact.findByIdAndUpdate(id, contact);
+    const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     if (!updatedContact) {
       throw HttpError(404);
     }
@@ -63,13 +64,13 @@ export const updateContact = async (req, res, next) => {
 export const updateStatusContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { favorite } = req.body;
-    console.log(req.body);
-    const contact = await Contact.findByIdAndUpdate(id, favorite);
+    const contact = await Contact.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     if (!contact) {
       throw HttpError(404);
     }
-    res.status(200).json(contacts);
+    res.status(200).json(contact);
   } catch (error) {
     next(error);
   }
