@@ -14,7 +14,7 @@ export const getAllContacts = async (_, res, next) => {
 export const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contactToFind = await Contact.findById({
+    const contactToFind = await Contact.findOne({
       _id: id,
       owner: req.user.id,
     });
@@ -30,7 +30,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contactToDelete = await Contact.findByIdAndDelete({
+    const contactToDelete = await Contact.findOneAndDelete({
       _id: id,
       owner: req.user.id,
     });
@@ -45,13 +45,12 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    const contact = req.body;
-    const newContact = await Contact.create(
-      { _id: id, owner: req.user.id },
-      contact
-    );
+    const owner = req.user.id;
+    const newContact = { ...req.body, owner };
 
-    res.status(201).json(newContact);
+    const contact = await Contact.create(newContact);
+
+    res.status(201).json(contact);
   } catch (error) {
     next(error);
   }
@@ -60,7 +59,7 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const updatedContact = await Contact.findByIdAndUpdate(
+    const updatedContact = await Contact.findOneAndUpdate(
       { _id: id, owner: req.user.id },
       req.body,
       {
@@ -79,7 +78,7 @@ export const updateContact = async (req, res, next) => {
 export const updateStatusContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const contact = await Contact.findByIdAndUpdate(
+    const contact = await Contact.findOneAndUpdate(
       { _id: id, owner: req.user.id },
       req.body,
       {
